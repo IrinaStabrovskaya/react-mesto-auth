@@ -151,7 +151,7 @@ const App = () => {
         isLoggedIn={isLoggedIn}
         />} 
         /> 
-               
+        <Route path="*" element={<Register />} />       
       </Routes>
       <Footer />
       <PopupEditProfile
