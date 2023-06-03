@@ -1,5 +1,4 @@
 import "../index.css";
-import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import PopupEditProfile from "./PopupWithForm/PopupEditProfile";
@@ -152,7 +151,7 @@ const App = () => {
         isLoggedIn={isLoggedIn}
         />} 
         /> 
-        <Route path="*" element={<h2>Page is not found</h2>}   />         
+               
       </Routes>
       <Footer />
       <PopupEditProfile

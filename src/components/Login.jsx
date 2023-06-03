@@ -1,12 +1,13 @@
 import AuthForm from './AuthForm';
 import { Link } from "react-router-dom";
 import Header from "./Header";
+import { useState } from 'react';
 
 const Login = () => {
-  //const [formValue, setFormValue] = useState({
-  //  email: '',
-  //  password: ' '
- // });
+  const [formValue, setFormValue] = useState({
+    email: '',
+    password: ' '
+  });
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -16,7 +17,7 @@ const Login = () => {
     });
   }
 
-  //const [errorPegister, setErrorPegister] = useState(' ');
+ // const [errorPegister, setErrorPegister] = useState(' ');
  
   return ( 
     <>  

@@ -1,7 +1,7 @@
 import Popup from "./Popup";
 
 const InfoTooltip = (props) => {
-    console.log(props);
+    
     <Popup
         name={props.name}
       isOpen={props.isOpen}
