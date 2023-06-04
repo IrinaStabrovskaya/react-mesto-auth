@@ -2,13 +2,15 @@ import AuthForm from "./AuthForm";
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import { useState } from "react";
-import * as mestoAuth from "../utils/mestoAuth";
-const Register = () => {  
+
+const Register = (props) => {  
+  console.log(props)
   const [formValue, setFormValue] = useState({
     email: '',
-    password: ' '
+    password: '',
   });
 
+  
   const handleChange = (e) => {
     const {name, value} = e.target;
     setFormValue({
@@ -17,13 +19,10 @@ const Register = () => {
     });  }
    
   const handleSubmit = (e) => {
-    const { email, password } = formValue;
+   const {email, password} = formValue;
     e.preventDefault();
-    console.log(mestoAuth.register)
-    mestoAuth.register(email, password)
-      .then((data) => {
-        console.log(data);
-      })
+    props.onRegister({email, password});
+    
   }
     return (  
     <>  
@@ -39,6 +38,7 @@ const Register = () => {
           <Link to="/sign-in" className="auth__link">Войти</Link>        
         </div>
       </AuthForm> 
+      
     </>   
   );
 }; 

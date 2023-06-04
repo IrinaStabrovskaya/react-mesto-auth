@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 import { useState } from 'react';
 
-const Login = () => {
+const Login = (props) => {
   const [formValue, setFormValue] = useState({
     email: '',
-    password: ' '
+    password: '',
   });
 
   const handleChange = (e) => {
@@ -17,7 +17,12 @@ const Login = () => {
     });
   }
 
- // const [errorPegister, setErrorPegister] = useState(' ');
+  const handleSubmit = (e) => {
+    const {email, password} = formValue;
+     e.preventDefault();
+     props.onAuthorization(email, password);
+     
+   }
  
   return ( 
     <>  
@@ -28,7 +33,8 @@ const Login = () => {
         title="Вход"
         text="Войти" 
         formValue={formValue}  
-        onChange={handleChange}   
+        onChange={handleChange} 
+        onSubmit={handleSubmit}  
       />
     </>    
   );

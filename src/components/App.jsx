@@ -9,23 +9,29 @@ import ImagePopup from "./ImagePopup";
 import { useState, useEffect } from "react";
 import { api } from "./../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./Login";
-import  Register  from "./Register";
-import ProtectedRoute  from "./ProtectedRoute";
+import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
+import * as mestoAuth from "../utils/mestoAuth";
 
 const App = () => {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [isInfoTooltip, setInfoTooltip] = useState(true);
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
+
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [errorRegister, setErrorRegister] = useState(false);
+  const [user, setUser] = useState({});
+
+  const navigate = useNavigate();
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -49,7 +55,7 @@ const App = () => {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
-    setInfoTooltip(false);
+    setInfoTooltipOpen(false);
   };
 
   const handleCardLike = (card) => {
@@ -116,6 +122,40 @@ const App = () => {
       });
   };
 
+  const handleRegister = ({email, password}) => {
+    return mestoAuth
+      .register({email, password})
+      .then((email, password) => { 
+        console.log(email, password)               
+        navigate("/sign-in", { replace: true });
+      })
+    };
+
+  //const checkToken = () => {
+  //  const token = localStorage.getItem("token");
+   // mestoAuth.isValidToken(token).then((data) => {
+   //   console.log(data)
+   // })
+  //}  
+
+ // useEffect(() => {
+  //  checkToken();
+  //}, [])
+
+  const handleAuthorization = ( email, password ) => {
+    return mestoAuth
+      .authorization( {email, password} )
+      .then((data) => {
+        console.log(data)
+        localStorage.setItem("token", data.token)
+        setIsLoggedIn(true);
+        
+
+        navigate("/main", { replace: true });
+      })
+      
+  };
+
   useEffect(() => {
     api
       .getInfo()
@@ -135,23 +175,44 @@ const App = () => {
   }, []);
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>    
+    <CurrentUserContext.Provider value={currentUser}>
       <Routes>
-        <Route path="/" element={isLoggedIn ? <Navigate to="/sign-in" replace /> : <Navigate to="/main" replace /> } />
-        <Route path="/sign-in" element={<Login />} />
-        <Route path="/sign-up" element={<Register />} />
-        <Route path="/main" element={<ProtectedRoute element={Main}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onEditAvatar={handleEditAvatarClick}
-        onCardClick={handleCardClick}
-        cards={cards}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}
-        isLoggedIn={isLoggedIn}
-        />} 
-        /> 
-        <Route path="*" element={<Register />} />       
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/sign-in" replace />
+            ) : (
+              <Navigate to="/main" replace />
+            )
+          }
+        />
+        <Route
+          path="/sign-in"
+          element={<Login onAuthorization={handleAuthorization} />}
+        />
+        <Route
+          path="/sign-up"
+          element={<Register onRegister={handleRegister} />}
+        />
+        <Route
+          path="/main"
+          element={
+            <ProtectedRoute
+              element={Main}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={handleCardClick}
+              cards={cards}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              isLoggedIn={isLoggedIn}
+              user={user}
+            />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
       <PopupEditProfile
@@ -178,9 +239,10 @@ const App = () => {
         isOpen={isImagePopupOpen}
         onClose={closeAllPopups}
       />
-      <InfoTooltip 
-        isOpen={isInfoTooltip}
+      <InfoTooltip
+        isOpen={isInfoTooltipOpen}
         onClose={closeAllPopups}
+        errorRegister={errorRegister}
       />
     </CurrentUserContext.Provider>
   );

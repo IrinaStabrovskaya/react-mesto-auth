@@ -1,4 +1,5 @@
-const Popup = (props) => {    
+const Popup = (props) => {   
+   
     return (
       <div
         className={`pop-up pop-up_type_${props.name} ${

@@ -2,9 +2,10 @@ import React, { useContext } from "react";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Header from "./Header";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Main(props) {
+  console.log(props);
   const currentUser = useContext(CurrentUserContext);
 
   const initialCards = props.cards.map((card) => (
@@ -27,8 +28,8 @@ function Main(props) {
 
   return (
     <>
-      <Header>
-        <p className="header__email">{`${props.email}`}</p>
+      <Header user={props.user}>
+        <p className="header__email">{`${props.user.email}`}</p>
         <Link to="/sign-in" className="header__link header__link_type_main" onClick={signOut}>
           Выйти
         </Link>

@@ -1,7 +1,7 @@
 import React from "react";
 
 const AuthForm = (props) => {
-  
+  console.log(props)
   return (
     <div className="auth">
       <h1 className="auth__title">{`${props.title}`}</h1>
@@ -13,7 +13,7 @@ const AuthForm = (props) => {
           id="email"
           name="email"
           type="email"
-          value={props.email} 
+          value={props.formValue.email} 
           autoComplete="email"
           placeholder="Email"
           onChange={props.onChange}
@@ -24,7 +24,7 @@ const AuthForm = (props) => {
           id="password"
           name="password"
           type="password"
-          value={props.password}
+          value={props.formValue.password}
           autoComplete="password"
           placeholder="Пароль"
           onChange={props.onChange}

@@ -1,28 +1,38 @@
 export const BASE_URL = 'https://auth.nomoreparties.co';
 
-export const register = ( email, password ) => {
+export const register = ( {email,
+    password} ) => {
+        
     return fetch(`${BASE_URL}/signup`, {
-        metod: 'POST',
+        method: 'POST',
         headers: {
+            "Accept": "application/json",
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password }),            
+        body: JSON.stringify( {
+            email: email,
+            password: password,
+        } ),            
     }).then((res) => {res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)});    
 }
 
-export const authorization = ({ email, password }) => {
+export const authorization = ( {email, password} ) => {
+    
     return fetch(`${BASE_URL}/signin`, {
-        metod: 'POST',
+        method: 'POST',
         headers: {
+            "Accept": "application/json",
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ 
+            email: email,
+            password: password, })
     }).then((res) => {res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)});
 }
 
 export const isValidToken = (token) =>{
     return fetch(`${BASE_URL}/users/me`, {
-        metod: 'GET',
+        method: 'GET',
         headers: {
             "Content-Type": "application/json",
             "Authorization" : `Bearer ${token}`
