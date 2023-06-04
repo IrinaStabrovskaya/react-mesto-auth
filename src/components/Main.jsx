@@ -5,9 +5,7 @@ import Header from "./Header";
 import { Link } from "react-router-dom";
 
 function Main(props) {
-  console.log(props);
   const currentUser = useContext(CurrentUserContext);
-
   const initialCards = props.cards.map((card) => (
     <Card
       key={card._id}
@@ -23,14 +21,18 @@ function Main(props) {
   ));
 
   function signOut() {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem("token");
   }
 
   return (
     <>
-      <Header user={props.user}>
+      <Header>
         <p className="header__email">{`${props.user.email}`}</p>
-        <Link to="/sign-in" className="header__link header__link_type_main" onClick={signOut}>
+        <Link
+          to="/sign-in"
+          className="header__link header__link_type_main"
+          onClick={signOut}
+        >
           Выйти
         </Link>
       </Header>

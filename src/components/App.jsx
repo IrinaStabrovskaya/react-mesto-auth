@@ -27,9 +27,9 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [errorRegister, setErrorRegister] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -122,39 +122,43 @@ const App = () => {
       });
   };
 
-  const handleRegister = ({email, password}) => {
+  const handleRegister = ({ email, password }) => {
     return mestoAuth
-      .register({email, password})
-      .then((email, password) => { 
-        console.log(email, password)               
+      .register({ email, password })
+      .then((data) => {
+        setUser(data.data.email);
+        setIsLoggedIn(true);
+        setInfoTooltipOpen(true);
         navigate("/sign-in", { replace: true });
       })
-    };
-
-  //const checkToken = () => {
-  //  const token = localStorage.getItem("token");
-   // mestoAuth.isValidToken(token).then((data) => {
-   //   console.log(data)
-   // })
-  //}  
-
- // useEffect(() => {
-  //  checkToken();
-  //}, [])
-
-  const handleAuthorization = ( email, password ) => {
-    return mestoAuth
-      .authorization( {email, password} )
-      .then((data) => {
-        console.log(data)
-        localStorage.setItem("token", data.token)
+      .catch(() => {
         setIsLoggedIn(true);
-        
-
-        navigate("/main", { replace: true });
-      })
-      
+        setErrorRegister(true);
+        setInfoTooltipOpen(true);
+      });
   };
+
+  const handleAuthorization = (email, password) => {
+    return mestoAuth.authorization({ email, password }).then((data) => {
+      localStorage.setItem("token", data.token);
+      navigate("/main", { replace: true });
+      checkToken(data.token);
+    });
+  };
+  const checkToken = () => {
+    const token = localStorage.getItem("token");
+    mestoAuth.isValidToken(token).then((data) => {
+      if (data) {
+        setIsLoggedIn(true);
+        setUser(data.data);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  };
+  useEffect(() => {
+    checkToken();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     api

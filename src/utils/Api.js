@@ -1,6 +1,3 @@
-let userId = null;
-
-
 export class Api {
   constructor(config) {
     this._url = config.url;
@@ -36,7 +33,7 @@ export class Api {
     }).then((res) => this._checkResponse(res));
   }
   //замена аватара пользователя
-  setAvatar(avatar) {    
+  setAvatar(avatar) {
     return fetch(`${this._url}/users/me/avatar`, {
       method: "PATCH",
       headers: this._headers,
@@ -95,13 +92,13 @@ export class Api {
       method: "DELETE",
       headers: this._headers,
       body: JSON.stringify({
-        cardId: cardId,      
+        cardId: cardId,
       }),
     }).then((res) => this._checkResponse(res));
   }
 
- //запрос на удаление или постановку лайка, с проверкой наличия моего лайка
-  changeLikeCardStatus(cardId, isLiked) {    
+  //запрос на удаление или постановку лайка, с проверкой наличия моего лайка
+  changeLikeCardStatus(cardId, isLiked) {
     return isLiked ? this.isLikeCard(cardId) : this.disLikeCard(cardId);
   }
 }
@@ -109,6 +106,6 @@ export const api = new Api({
   url: "https://mesto.nomoreparties.co/v1/cohort-62",
   headers: {
     authorization: "519bc60f-1765-4721-8a2c-733284c363a9",
-    "content-type": "application/json"
-  }
+    "content-type": "application/json",
+  },
 });
