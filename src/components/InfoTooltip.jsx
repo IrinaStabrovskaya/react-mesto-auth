@@ -2,7 +2,7 @@ import Popup from "./Popup";
 import registerEr from "../images/registerEr.png";
 import registerOk from "../images/registerOk.png";
 
-const InfoTooltip = (props) => {
+const InfoTooltip = (props) => {  
   return (
     <Popup name="infoTooltip" isOpen={props.isOpen} onClose={props.onClose}>
       <img

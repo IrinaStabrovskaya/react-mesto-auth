@@ -15,7 +15,7 @@ export const register = ({ email, password }) => {
     if (res.ok) {
       return res.json();
     } else {
-      Promise.reject(`Ошибка: ${res.status}`);
+      return Promise.reject(`Ошибка: ${res.status}`);
     }
   });
 };
@@ -34,7 +34,7 @@ export const authorization = ({ email, password }) => {
     if (res.ok) {
       return res.json();
     } else {
-      Promise.reject(`Ошибка: ${res.status}`);
+     return Promise.reject(`Ошибка: ${res.status}`);
     }
   });
 };
@@ -50,7 +50,7 @@ export const isValidToken = (token) => {
     if (res.ok) {
       return res.json();
     } else {
-      Promise.reject(`Ошибка: ${res.status}`);
+      return  Promise.reject(`Ошибка: ${res.status}`);
     }
   });
 };

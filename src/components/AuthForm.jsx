@@ -1,6 +1,25 @@
-import React from "react";
+import { useState } from "react";
 
 const AuthForm = (props) => {
+  const [formValue, setFormValue] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValue({
+      ...formValue,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    const { email, password } = formValue;
+    e.preventDefault();
+    props.onAuth(email, password);
+  };
+
   return (
     <div className="auth">
       <h1 className="auth__title">{`${props.title}`}</h1>
@@ -8,7 +27,7 @@ const AuthForm = (props) => {
         className="auth__form"
         noValidate
         autoComplete="off"
-        onSubmit={props.onSubmit}
+        onSubmit={handleSubmit}
       >
         <input
           className="auth__input"
@@ -16,10 +35,10 @@ const AuthForm = (props) => {
           id="email"
           name="email"
           type="email"
-          value={props.formValue.email}
+          value={formValue.email}
           autoComplete="email"
           placeholder="Email"
-          onChange={props.onChange}
+          onChange={handleChange}
         ></input>
         <input
           className="auth__input"
@@ -27,10 +46,10 @@ const AuthForm = (props) => {
           id="password"
           name="password"
           type="password"
-          value={props.formValue.password}
+          value={formValue.password}
           autoComplete="password"
           placeholder="Пароль"
-          onChange={props.onChange}
+          onChange={handleChange}
         ></input>
         <button className="auth__btn-submit btn-hover" type="submit">
           {`${props.text}`}

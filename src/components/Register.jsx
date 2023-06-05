@@ -1,27 +1,8 @@
 import AuthForm from "./AuthForm";
 import { Link } from "react-router-dom";
 import Header from "./Header";
-import { useState } from "react";
 
 const Register = (props) => {
-  const [formValue, setFormValue] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    const { email, password } = formValue;
-    e.preventDefault();
-    props.onRegister({ email, password });
-  };
   return (
     <>
       <Header>
@@ -32,9 +13,7 @@ const Register = (props) => {
       <AuthForm
         title="Регистрация"
         text="Зарегистрироваться"
-        onChange={handleChange}
-        formValue={formValue}
-        onSubmit={handleSubmit}
+        onAuth={props.onRegister}
       >
         <div className="auth__wrapper">
           <p className="auth__subtitle">Уже зарегистрированы?</p>

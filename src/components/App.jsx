@@ -9,7 +9,13 @@ import ImagePopup from "./ImagePopup";
 import { useState, useEffect } from "react";
 import { api } from "./../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
@@ -32,7 +38,7 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
-
+  const location = useLocation();
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
   };
@@ -122,75 +128,104 @@ const App = () => {
       });
   };
 
-  const handleRegister = ({ email, password }) => {
+  const checkToken = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      mestoAuth
+        .isValidToken(token)
+        .then((data) => {
+          if (data) {
+            setIsLoggedIn(true);
+            setUser(data.data.email);
+            navigate(location.pathname);
+          } else {
+            setIsLoggedIn(false);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+  useEffect(() => {
+    checkToken();
+    // eslint-disable-next-line
+  }, []);
+
+  const handleRegister = (email, password) => {
     return mestoAuth
       .register({ email, password })
       .then((data) => {
         setUser(data.data.email);
         setIsLoggedIn(true);
+        setErrorRegister(false);
         setInfoTooltipOpen(true);
         navigate("/sign-in", { replace: true });
       })
-      .catch(() => {
-        setIsLoggedIn(true);
+      .catch(() => {       
+        setIsLoggedIn(false);
         setErrorRegister(true);
         setInfoTooltipOpen(true);
       });
   };
 
   const handleAuthorization = (email, password) => {
-    return mestoAuth.authorization({ email, password }).then((data) => {
-      localStorage.setItem("token", data.token);
-      navigate("/main", { replace: true });
-      checkToken(data.token);
-    });
-  };
-  const checkToken = () => {
-    const token = localStorage.getItem("token");
-    mestoAuth.isValidToken(token).then((data) => {
-      if (data) {
-        setIsLoggedIn(true);
-        setUser(data.data);
-      } else {
+    return mestoAuth
+      .authorization({ email, password })
+      .then((data) => {
+        setUser(user);
+        localStorage.setItem("token", data.token);
+        setIsLoggedIn(true);        
+        navigate("/", { replace: true });
+        
+      })
+      .catch((err) => {
+        console.log(err);
         setIsLoggedIn(false);
-      }
-    });
+        setErrorRegister(true);
+        setInfoTooltipOpen(true);
+      });
   };
+
   useEffect(() => {
-    checkToken();
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoading(true);
+      api
+        .getInfo()
+        .then((data) => {
+          setCurrentUser(data);
+        })
+        .catch(() => {       
+          setErrorRegister(true);
+          setInfoTooltipOpen(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   }, [isLoggedIn]);
 
   useEffect(() => {
-    api
-      .getInfo()
-      .then((data) => {
-        setCurrentUser(data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    api
-      .getInitialsCards()
-      .then((cards) => {
-        setCards(cards);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoading(true);
+      api
+        .getInitialsCards()
+        .then((cards) => {
+          setCards(cards);
+        })
+        .catch(() => {        
+          setErrorRegister(true);
+          setInfoTooltipOpen(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [isLoggedIn]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Routes>
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/sign-in" replace />
-            ) : (
-              <Navigate to="/main" replace />
-            )
-          }
-        />
         <Route
           path="/sign-in"
           element={<Login onAuthorization={handleAuthorization} />}
@@ -200,7 +235,7 @@ const App = () => {
           element={<Register onRegister={handleRegister} />}
         />
         <Route
-          path="/main"
+          path="/"
           element={
             <ProtectedRoute
               element={Main}

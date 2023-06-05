@@ -2,10 +2,11 @@ import React, { useContext } from "react";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Header from "./Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
+  const navigate = useNavigate();
   const initialCards = props.cards.map((card) => (
     <Card
       key={card._id}
@@ -22,12 +23,13 @@ function Main(props) {
 
   function signOut() {
     localStorage.removeItem("token");
+    navigate("/sign-in");
   }
 
   return (
     <>
       <Header>
-        <p className="header__email">{`${props.user.email}`}</p>
+        <p className="header__email">{`${props.user}`}</p>
         <Link
           to="/sign-in"
           className="header__link header__link_type_main"
