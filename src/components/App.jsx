@@ -170,15 +170,14 @@ const App = () => {
   const handleAuthorization = (email, password) => {
     return mestoAuth
       .authorization({ email, password })
-      .then((data) => {
-        setUser(user);
+      .then((data) => {        
         localStorage.setItem("token", data.token);
+        setUser(user);
         setIsLoggedIn(true);        
         navigate("/", { replace: true });
         
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {        
         setIsLoggedIn(false);
         setErrorRegister(true);
         setInfoTooltipOpen(true);
