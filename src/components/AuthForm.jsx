@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const AuthForm = (props) => {
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
   });
+
+  const location = useLocation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,6 +21,9 @@ const AuthForm = (props) => {
     const { email, password } = formValue;
     e.preventDefault();
     props.onAuth(email, password);
+    if (location.pathname === "/sign-in") {
+      props.setUser(email);
+    }
   };
 
   return (

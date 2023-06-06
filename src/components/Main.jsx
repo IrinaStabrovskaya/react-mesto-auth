@@ -24,6 +24,7 @@ function Main(props) {
   function signOut() {
     localStorage.removeItem("token");
     navigate("/sign-in");
+    props.setUser("");
   }
 
   return (

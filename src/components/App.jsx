@@ -160,7 +160,7 @@ const App = () => {
         setInfoTooltipOpen(true);
         navigate("/sign-in", { replace: true });
       })
-      .catch(() => {       
+      .catch(() => {
         setIsLoggedIn(false);
         setErrorRegister(true);
         setInfoTooltipOpen(true);
@@ -170,14 +170,13 @@ const App = () => {
   const handleAuthorization = (email, password) => {
     return mestoAuth
       .authorization({ email, password })
-      .then((data) => {        
+      .then((data) => {
         localStorage.setItem("token", data.token);
-        setUser(user);
-        setIsLoggedIn(true);        
+        setIsLoggedIn(true);
         navigate("/", { replace: true });
-        
       })
-      .catch(() => {        
+
+      .catch(() => {
         setIsLoggedIn(false);
         setErrorRegister(true);
         setInfoTooltipOpen(true);
@@ -193,7 +192,7 @@ const App = () => {
         .then((data) => {
           setCurrentUser(data);
         })
-        .catch(() => {       
+        .catch(() => {
           setErrorRegister(true);
           setInfoTooltipOpen(true);
         })
@@ -212,7 +211,7 @@ const App = () => {
         .then((cards) => {
           setCards(cards);
         })
-        .catch(() => {        
+        .catch(() => {
           setErrorRegister(true);
           setInfoTooltipOpen(true);
         })
@@ -227,7 +226,9 @@ const App = () => {
       <Routes>
         <Route
           path="/sign-in"
-          element={<Login onAuthorization={handleAuthorization} />}
+          element={
+            <Login onAuthorization={handleAuthorization} setUser={setUser} />
+          }
         />
         <Route
           path="/sign-up"
@@ -247,6 +248,7 @@ const App = () => {
               onCardDelete={handleCardDelete}
               isLoggedIn={isLoggedIn}
               user={user}
+              setUser={setUser}
             />
           }
         />
